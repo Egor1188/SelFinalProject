@@ -3,6 +3,7 @@ from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.firefox.options import Options as FireFoxOption
 
+
 # добавляем параметр запуска тестов в командной строке(чем запускать, хромом или фаерфоксом) По умолчанию хром
 def pytest_addoption(parser):
     # parser.addoption('--browser_name', action='store', default=None, help="Choose browser: chrome or firefox")
@@ -26,10 +27,10 @@ def pytest_addoption(parser):
 
 
 # Запуск браузера(для каждой функции)
-@pytest.fixture(scope="function") # по умолчанию запускается для каждой функции
+@pytest.fixture(scope="function")  # по умолчанию запускается для каждой функции
 def browser(request):
-    browser_name = request.config.getoption("browser_name") # получаем параметр командной строки browser_name
-    language = request.config.getoption('language') # получаем параметр командной строки language
+    browser_name = request.config.getoption("browser_name")  # получаем параметр командной строки browser_name
+    language = request.config.getoption('language')  # получаем параметр командной строки language
     if browser_name == "chrome":
         print("\nstart chrome browser for test..")
         options = Options()
