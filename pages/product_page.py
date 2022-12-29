@@ -43,3 +43,12 @@ class ProductPage(BasePage):
         item_worth = self.browser.find_element(*ProductPageLocators.ITEM_WORTH).text
         assert cart_worth == item_worth
 
+    def should_not_be_success_message(self):
+        assert self.is_not_element_present(*ProductPageLocators.ITEM_ADDED_MESSAGE), \
+            "Success message is presented, but should not be"
+
+    def should_be_disappeared(self):
+        assert self.is_disappeared(*ProductPageLocators.ITEM_ADDED_MESSAGE), 'Success message is not disappeared, ' \
+                                                                             'but should  be '
+
+
