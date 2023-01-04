@@ -27,7 +27,7 @@ class BasePage:
             return False
         return True
 
-    def is_not_element_present(self, how, what, timeout=4):
+    def is_not_element_present(self, how, what, timeout=2):
         try:
             WebDriverWait(self.browser, timeout).until(EC.presence_of_element_located((how, what)))
         except TimeoutException:
@@ -44,4 +44,11 @@ class BasePage:
         return True
 
     def should_be_login_link(self):
-        assert self.is_element_present(*BasePageLocators.LOGIN_LINK), "Login link is not presented"
+        assert self.is_element_present(*BasePageLocators.LOGIN_LINK), "Login link is not present"
+
+    def should_be_user_cart(self):
+        assert self.is_element_present(*BasePageLocators.USER_CART), "User cart is not present"
+
+    def go_to_user_cart(self):
+        cart = self.browser.find_element(*BasePageLocators.USER_CART)
+        cart.click()

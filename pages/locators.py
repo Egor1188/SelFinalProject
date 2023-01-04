@@ -5,6 +5,8 @@ class MainPageLocators:
     LOGIN_LINK = (By.CSS_SELECTOR, "#login_link")
     LOGIN_FORM = (By.CSS_SELECTOR, "#login_form")
     REGISTER_FORM = (By.CSS_SELECTOR, "#register_form")
+    USER_CART = (By.CSS_SELECTOR, '#default > header > div.page_inner > div > div.basket-mini.pull-right.hidden-xs > '
+                                  'span > a')
 
 
 class ProductPageLocators:
@@ -18,3 +20,10 @@ class ProductPageLocators:
 class BasePageLocators:
     LOGIN_LINK = (By.CSS_SELECTOR, "#login_link")
     LOGIN_LINK_INVALID = (By.CSS_SELECTOR, "#login_link_inc")
+    USER_CART = (By.CSS_SELECTOR, '#default > header > div.page_inner > div > div.basket-mini.pull-right.hidden-xs > '
+                                  'span > a')
+
+
+class UserCartLocators:
+    CART_IS_EMPTY = (By.CSS_SELECTOR, '#content_inner > p')
+    CART_ITEM = (By.CSS_SELECTOR, '#basket_formset > div')
