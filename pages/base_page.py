@@ -20,9 +20,10 @@ class BasePage:
     def open(self):
         self.browser.get(self.url)
 
-    def is_element_present(self, how, what):
+    def is_element_present(self, how, what, timeout=0):
         try:
-            self.browser.find_element(how, what)
+            # self.browser.find_element(how, what)
+            WebDriverWait(self.browser, timeout).until(EC.presence_of_element_located((how, what)))
         except NoSuchElementException:
             return False
         return True
@@ -40,7 +41,6 @@ class BasePage:
                 until_not(EC.presence_of_element_located((how, what)))
         except TimeoutException:
             return False
-
         return True
 
     def should_be_login_link(self):
@@ -52,3 +52,6 @@ class BasePage:
     def go_to_user_cart(self):
         cart = self.browser.find_element(*BasePageLocators.USER_CART)
         cart.click()
+
+    def is_user_authorized(self):
+        assert self.is_element_present(*BasePageLocators.USER_ICON), 'User icon is absent, probably unauthorized user'
