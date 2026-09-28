@@ -12,21 +12,31 @@ def pytest_addoption(parser):
                      help="Choose browser: chrome or firefox")
     parser.addoption('--language', action='store', default='en',
                      help="Choose language")
+    parser.addoption('--headless', action='store_true', default=False,
+                     help="Run browser without UI")
 
 
-# Запуск браузера(для каждой функции)
+# Запуск браузера (для каждой функции)
 @pytest.fixture(scope="function")  # по умолчанию запускается для каждой функции
 def browser(request):
     browser_name = request.config.getoption("browser_name")  # получаем параметр командной строки browser_name
     language = request.config.getoption('language')  # получаем параметр командной строки language
+    headless = request.config.getoption('headless')  # запуск без окна браузера
     if browser_name == "chrome":
         print("\nstart chrome browser for test..")
         options = Options()
         options.add_experimental_option('prefs', {'intl.accept_languages': language})
+        if headless:
+            options.add_argument("--headless=new")
+            options.add_argument("--window-size=1920,1080")  # в headless окно по умолчанию маленькое
         browser = webdriver.Chrome(options=options)
     elif browser_name == "firefox":
         options = FireFoxOption()
         options.set_preference("intl.accept_languages", language)
+        if headless:
+            options.add_argument("-headless")
+            options.add_argument("--width=1920")
+            options.add_argument("--height=1080")
         print("\nstart firefox browser for test..")
         browser = webdriver.Firefox(options=options)
     else:
