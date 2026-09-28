@@ -31,4 +31,4 @@ def test_guest_cant_see_product_in_basket_opened_from_main_page(browser):
     page.should_be_user_cart()
     page.go_to_user_cart()
     page = UserCart(browser, browser.current_url)
-    page.is_empty()
+    page.should_be_empty()

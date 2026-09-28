@@ -1,0 +1,23 @@
+[project]
+name = "selfinalproject"
+version = "0.1.0"
+description = ""
+authors = [
+    {name = "Heorhii Mishcheriakov",email = "egor1188@gmail.com"}
+]
+readme = "README.md"
+requires-python = ">=3.14"
+dependencies = [
+    "selenium (>=4.49.0,<5.0.0)",
+    "pytest (>=9.1.1,<10.0.0)"
+]
+
+[tool.poetry]
+package-mode = false
+
+[tool.pytest]
+markers = ["login_test: тесты перехода на страницу логина"]
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"

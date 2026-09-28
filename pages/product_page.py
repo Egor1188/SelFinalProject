@@ -1,6 +1,8 @@
 import math
 
-from selenium.common import NoAlertPresentException
+from selenium.common.exceptions import TimeoutException
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.support.wait import WebDriverWait
 
 from pages.base_page import BasePage
 from pages.locators import ProductPageLocators
@@ -12,17 +14,17 @@ class ProductPage(BasePage):
         button.click()
 
     def solve_quiz_and_get_code(self):
-        alert = self.browser.switch_to.alert
+        alert = WebDriverWait(self.browser, self.timeout).until(EC.alert_is_present())
         x = alert.text.split(" ")[2]
         answer = str(math.log(abs((12 * math.sin(float(x))))))
         alert.send_keys(answer)
         alert.accept()
         try:
-            alert = self.browser.switch_to.alert
+            alert = WebDriverWait(self.browser, 2).until(EC.alert_is_present())
             alert_text = alert.text
             print(f"Your code: {alert_text}")
             alert.accept()
-        except NoAlertPresentException:
+        except TimeoutException:
             print("No second alert presented")
 
     def should_be_message_about_adding(self):
