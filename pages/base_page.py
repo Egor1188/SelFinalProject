@@ -1,4 +1,4 @@
-from selenium.common.exceptions import TimeoutException
+from selenium.common.exceptions import NoSuchElementException, StaleElementReferenceException, TimeoutException
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
@@ -9,7 +9,7 @@ class BasePage:
     def __init__(self, browser, url, timeout=10):
         self.browser = browser
         self.url = url
-        # таймаут по умолчанию для явных ожиданий (неявное ожидание не используем)
+        # тайм-аут по умолчанию для явных ожиданий (неявное ожидание не используем)
         self.timeout = timeout
 
     def go_to_login_page(self):
@@ -42,6 +42,29 @@ class BasePage:
         except TimeoutException:
             return False
         return True
+
+    def should_have_text(self, how, what, expected_text, exact=True, timeout=None):
+        # exact=True — текст элемента полностью совпадает (как have.text), exact=False — содержит подстроку
+        if timeout is None:
+            timeout = self.timeout
+
+        def text_matches(browser):
+            try:
+                actual = browser.find_element(how, what).text.strip()
+            except (NoSuchElementException, StaleElementReferenceException):
+                return False
+            return actual == expected_text if exact else expected_text in actual
+
+        try:
+            WebDriverWait(self.browser, timeout).until(text_matches)
+        except TimeoutException:
+            try:
+                actual = self.browser.find_element(how, what).text.strip()
+            except NoSuchElementException:
+                actual = "<element not found>"
+            raise AssertionError(
+                f"Element {(how, what)} should {'have' if exact else 'contain'} text "
+                f"'{expected_text}', but actual text is '{actual}'")
 
     def should_be_login_link(self):
         assert self.is_element_present(*BasePageLocators.LOGIN_LINK), "Login link is not present"
