@@ -32,3 +32,10 @@ def test_guest_cant_see_product_in_basket_opened_from_main_page(browser):
     page.go_to_user_cart()
     page = UserCart(browser, browser.current_url)
     page.should_be_empty()
+
+
+@pytest.mark.known_js_errors("oscar is not defined")  # известная ошибка сайта, есть на каждой странице
+def test_main_page_has_no_unexpected_js_errors(browser, no_js_errors):
+    page = MainPage(browser, MainPageLocators.MAIN_PAGE_LINK)
+    page.open()
+    page.should_be_login_link()

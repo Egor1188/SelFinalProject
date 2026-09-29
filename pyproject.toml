@@ -16,7 +16,10 @@ dependencies = [
 package-mode = false
 
 [tool.pytest]
-markers = ["login_test: тесты перехода на страницу логина"]
+markers = [
+    "login_test: тесты перехода на страницу логина",
+    "known_js_errors(*texts): известные JS-ошибки сайта, которые игнорирует фикстура no_js_errors",
+]
 
 [build-system]
 requires = ["poetry-core>=2.0.0,<3.0.0"]

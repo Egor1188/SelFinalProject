@@ -26,6 +26,9 @@ def browser(request):
         print("\nstart chrome browser for test..")
         options = Options()
         options.add_experimental_option('prefs', {'intl.accept_languages': language})
+        options.enable_bidi = True  # WebSocket-канал BiDi: нужен для событий консоли и JS-ошибок
+        # с BiDi браузер по умолчанию сразу закрывает alert, и тест не успевает его прочитать
+        options.unhandled_prompt_behavior = "ignore"
         if headless:
             options.add_argument("--headless=new")
             options.add_argument("--window-size=1920,1080")  # в headless окно по умолчанию маленькое
@@ -33,6 +36,8 @@ def browser(request):
     elif browser_name == "firefox":
         options = FireFoxOption()
         options.set_preference("intl.accept_languages", language)
+        options.enable_bidi = True
+        options.unhandled_prompt_behavior = "ignore"
         if headless:
             options.add_argument("-headless")
             options.add_argument("--width=1920")
@@ -44,3 +49,20 @@ def browser(request):
     yield browser
     print("\nquit browser..")
     browser.quit()
+
+
+# Проверка JS-ошибок на странице через WebDriver BiDi.
+# Подключается явно: def test_x(browser, no_js_errors). Ошибки собираются во время теста,
+# и если среди них есть неизвестные, тест падает на этапе teardown.
+# Известные ошибки сайта можно пропустить: @pytest.mark.known_js_errors("oscar is not defined")
+@pytest.fixture
+def no_js_errors(request, browser):
+    errors = []
+    handler_id = browser.script.add_javascript_error_handler(lambda error: errors.append(error.text))
+    yield errors
+    browser.script.remove_javascript_error_handler(handler_id)
+    marker = request.node.get_closest_marker("known_js_errors")
+    known = marker.args if marker else ()
+    unexpected = [error for error in errors if not any(text in error for text in known)]
+    if unexpected:
+        pytest.fail("JS errors on page:\n" + "\n".join(unexpected), pytrace=False)
